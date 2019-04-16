@@ -76,12 +76,25 @@ function youbuyNow() {
                 ]
                 }
 
-            ])
+            ]).then(function(answer){
+                if (answer.retry === "No, I'd like to exit.") {
+                    console.log("Ok. See you later!");
+                    connection.end();
+                }
+                else {
+                    youbuyNow();
+                }
+            })
         }
-        // else{
-            // updateStock();
-        // }
+        
+        else {
+            updateStock();
+        }
     })
+
+    function updateStock() {
+        console.log("Updating Stock")
+    }
     
     })
 
