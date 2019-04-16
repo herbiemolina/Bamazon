@@ -121,7 +121,7 @@ function youbuyNow() {
                 }
             ]);
 
-            console.log(`Your total: ${res[0].price * answer.howmany} `)
+            console.log(`Your total is: $${res[0].price * answer.howmany} `)
             readProducts();
         }
     })
