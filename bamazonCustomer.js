@@ -26,20 +26,42 @@ var connection = mysql.createConnection({
   
 //displays all the products in db
   function readProducts() {
-    console.log("Selecting all products...\n");
+    console.log("Finding all products...\n");
     connection.query("SELECT * FROM Products", function(err, res) {
       if (err) throw err;
       // Log all results of the SELECT statement
       console.log(columnify(res));
     
-      youbuyNow();
+      whatsUp();
+    //   youbuyNow();
     });
     
 };
 
 // var purchaseNum = connection.query("SELECT stock_quantity FROM bamazon_db.products WHERE item_id = " + answer.whatyoubuy, function (err, res) {
     
-
+function whatsUp() {
+    inquirer.prompt([
+        {
+        name: "wannaBuy",
+        type: "list",
+        message: "What would you like to do?",
+        choices: 
+        [
+            "Buy something",
+            "EXIT"
+    ]
+        }
+    ]).then(function(answer) {
+        if (answer.wannaBuy === "Buy something") {
+            youbuyNow();
+        }
+        else {
+            console.log("Ok. Bye now!")
+            connection.end();
+        }
+    })
+}
 //prompts the user what do they want to do?
 function youbuyNow() {
     inquirer.prompt([
@@ -56,7 +78,7 @@ function youbuyNow() {
         }
     
 ]).then(function(answer) {
-    connection.query("SELECT stock_quantity FROM bamazon_db.products WHERE ?",
+    connection.query("SELECT stock_quantity, price FROM bamazon_db.products WHERE ?",
     {
         item_id: answer.whatyoubuy
     },
@@ -88,12 +110,24 @@ function youbuyNow() {
         }
         
         else {
-            updateStock();
+            console.log("Updating Stock");
+            connection.query("UPDATE Products SET ? WHERE ?",
+            [
+                {
+                    stock_quantity: res[0].stock_quantity - answer.howmany
+                },
+                {
+                    item_id: answer.whatyoubuy
+                }
+            ]);
+
+            console.log(`Your total: ${res[0].price * answer.howmany} `)
+            readProducts();
         }
     })
 
     function updateStock() {
-        console.log("Updating Stock")
+        
     }
     
     })
